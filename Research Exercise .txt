@@ -1,0 +1,55 @@
+Stage 1:
+i was asked to expose the lambda to the internet and i've choose - REST API.
+i've chosen REST API because its designed to handle the HTTP request as asked, it got alot of endpoint for different options, troubleshoot and logs are easy to manage and api is the base method because LB is mainly to distribute the traffic and function URL are mostly used to invoke the lambda and less to expose it to the internet
+
+Stage 2:
+
+1.i would consider to use an ssh for the remote access or vpc
+
+2.(1)Configure a bastion to configure an ssh-agent that will secure the connection
+  (2)will make an sg that will protect the traffict to the ec2 that only the private ip could access
+
+3.i will use (1) almost always because a secure ssh agent or vpc will make the connection to the aws generally safer then just letting anyone to access the whole aws never the less the ec2 
+
+and i will use (2) always. theres no time that you will not control the engress and ingres of your ec2 or other services, because that's just not save and you really need control over the data that access these ec2
+
+4.so (1) will work with bastion that will sit on a public subnet and will act as an "accepter" or more like a gateway while the ssh will sit on a private subnet so it won't be reached by the internet, the bastion will allow you to access that private instance and enforce all the access control policies.
+
+while (2)is a simple sg that you can manage manually or automated all you ingres and engress network, meaning that if an ip is allowed to use the ec2, he will grant access, but if not.. he cannot use it.
+
+
+
+Research Exercise Deliverables:
+
+			the issues with (1) - bastion host -
+
+if something happens and the bastion host becomes unavailble you will lose all access to the instances,
+
+if there will be any security vulnerability on the bastion side it can risk the instances aswell
+
+and if you are making alot of instances really fast it can become hard to access from a single bastion host
+
+				the solution -
+
+you can make couple of bastion gost or make an auto-scaler for it,
+
+need to be updated always and restricting access to authorized users only,
+
+you can use AWS SMS (systems manager session) or implement bastion host fleet
+
+
+			the issues with (2) - Security Groups - 
+
+not configuring the right things,
+
+no monitoring availble,
+
+it can be hard to follow everthing and not getting lost in the middle
+
+					the solution -
+review the audit of the sg rules to ensure that they are correct almost regulary,
+
+use cloudwatcg to set alarms for anything unusual,
+
+use CloudFormation to manage the security group config and the versions
+
